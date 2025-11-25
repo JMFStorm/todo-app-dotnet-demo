@@ -1,0 +1,90 @@
+# .NET - build artifacts
+bin/
+obj/
+out/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]ogs/
+[Tt]est[Rr]esults/
+
+# .NET User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# .NET Core / SDK
+*.csproj.user
+*.sln.docstates
+*.cache
+*.tmp
+*.tmp_proj
+.project
+.settings/
+.idea/
+*.dotCover
+
+# NuGet
+packages/
+*.nupkg
+.nuget/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+global.json
+
+# VS Code
+.vscode/
+!.vscode/settings.json          # Jos haluat jakaa workspace-asetukset tiimille
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Rider / JetBrains (jos jollain on)
+.idea/
+*.iml
+
+# Visual Studio (jos joku vahingossa avaa)
+.vs/
+*.suo
+*.user
+*.sln.docstates
+
+# macOS
+.DS_Store
+*.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Local environment files
+.env
+.env.local
+.env.development
+.env.production
+appsettings.Local.json
+secrets.json
+
+# Publish / deployment folders
+publish/
+wwwroot/bin/
+wwwroot/obj/
+
+# Entity Framework migrations (jos et halua committia niitä vielä)
+Migrations/*_*.cs   # poistaa timestamp-tiedostot, mutta jättää designer.cs-tiedostot
+# Poista ylläoleva rivi, jos haluat migrations-tiedostot mukaan repoosiin
+
+# Optional: exclude launchSettings.json if it contains local secrets
+Properties/launchSettings.json
+
+*.db
