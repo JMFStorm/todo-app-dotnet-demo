@@ -33,6 +33,7 @@ public class TodoServiceTests
         // Assert
         Assert.Equal(2, result.Count);
         Assert.Contains(result, t => t.Title == "First");
+         Assert.Contains(result, t => t.Title == "Second");
     }
 
     [Fact]
@@ -50,6 +51,20 @@ public class TodoServiceTests
         Assert.Equal("Test", result?.Title);
     }
 
+        [Fact]
+    public async Task GetByIdAsync_NonExistingId_ReturnsNull()
+    {
+        var todo = new Todo { Title = "Test" };
+        _context.Todos.Add(todo);
+        await _context.SaveChangesAsync();
+
+        // Act
+        var result = await _service.GetByIdAsync(999);
+
+        // Assert
+        Assert.Null(result);
+    }
+
     [Fact]
     public async Task CreateAsync_AddsTodoAndReturnsIt()
     {
@@ -61,7 +76,8 @@ public class TodoServiceTests
         // Assert
         Assert.True(result.Id > 0);
         Assert.Equal("New Todo", result.Title);
-        Assert.Single(await _context.Todos.ToListAsync());
+        var currentItems = await _context.Todos.ToListAsync();
+        Assert.Single(currentItems);
     }
 
     [Fact]
