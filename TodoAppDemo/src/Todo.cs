@@ -15,6 +15,7 @@ public class Todo
     [JsonPropertyName("id")]
     public int Id { get; set; }
 
+    [MaxLength(200)]
     [Column("title")]
     [JsonPropertyName("title")]
     public required string Title { get; set; }

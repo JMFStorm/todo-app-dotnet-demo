@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Todo App Demo</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 500px;
+            margin: 40px auto;
+        }
+
+        input {
+            padding: 6px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 6px 12px;
+        }
+
+        li button {
+            margin-left: 0.5rem;
+        }
+
+        li {
+            margin: 6px 0;
+        }
+
+        .done {
+            text-decoration: line-through;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <h1>Todo App Demo</h1>
+        <p>Press Add button (or Enter key) to add new todo items:</p>
+        <textarea v-model="newTodo" @keyup.ctrl.enter="addTodo" placeholder="Add new todo item" rows="2" maxlength="200"
+            style="width: 100%; padding: 12px; font-size: 16px; resize: vertical;">
+        </textarea>
+        <button @click="addTodo">Add</button>
+        <section>
+            <ul>
+                <li v-for="todo in todos" :key="todo.id">
+                    <label>
+                        <input type="checkbox" v-model="todo.isDone" @change="toggleDone(todo)">
+                        <span :class="{ done: todo.isDone }">{{ todo.title }}</span>
+                    </label>
+                    <button @click="removeTodo(todo.id)">Delete</button>
+                </li>
+            </ul>
+            <p>
+                <strong>{{ remaining }}</strong> todo items
+            </p>
+        </section>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    newTodo: "",
+                    todos: []
+                };
+            },
+            computed: {
+                remaining() {
+                    return this.todos.filter(t => !t.done).length;
+                }
+            },
+            methods: {
+                async loadTodos() {
+                    try {
+                        const response = await fetch("/api/todos");
+                        if (response.ok) {
+                            this.todos = await response.json();
+                        }
+                    } catch (err) {
+                        console.error("LoadTodos request failed", err);
+                    }
+                },
+                async addTodo() {
+                    const text = this.newTodo.trim();
+                    if (!text) {
+                        return;
+                    }
+                    const newTodoItem = {
+                        title: text,
+                        isDone: false
+                    };
+                    try {
+                        const response = await fetch("/api/todos", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(newTodoItem)
+                        });
+                        if (response.ok) {
+                            const createdTodo = await response.json();
+                            this.todos.push(createdTodo);
+                            this.newTodo = "";
+                        }
+                    } catch (err) {
+                        console.error("AddTodo request failed", err);
+                    }
+                },
+                async toggleDone(todo) {
+                    const oldValue = todo.isDone;
+                    try {
+                        const res = await fetch(`/api/todos/${todo.id}`, {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ title: todo.title, isDone: todo.isDone })
+                        });
+                        if (!res.ok) {
+                            throw new Error();
+                        }
+                    } catch {
+                        todo.isDone = !oldValue;
+                        console.error("ToggleDone request failed");
+                    }
+                },
+                async removeTodo(id) {
+                    try {
+                        await fetch(`/api/todos/${id}`, { method: "DELETE" });
+                        this.todos = this.todos.filter(t => t.id !== id);
+                    } catch (err) {
+                        console.error("RemoveTodo request failed", err);
+                    }
+                },
+            },
+            mounted() {
+                this.loadTodos();
+            }
+        }).mount("#app");
+    </script>
+
+</body>
+
+</html>

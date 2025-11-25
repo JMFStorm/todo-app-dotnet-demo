@@ -33,7 +33,7 @@ public class TodoServiceTests
         // Assert
         Assert.Equal(2, result.Count);
         Assert.Contains(result, t => t.Title == "First");
-         Assert.Contains(result, t => t.Title == "Second");
+        Assert.Contains(result, t => t.Title == "Second");
     }
 
     [Fact]
