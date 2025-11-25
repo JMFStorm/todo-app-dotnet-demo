@@ -8,8 +8,26 @@
     <style>
         body {
             font-family: sans-serif;
-            max-width: 500px;
+            max-width: 650px;
             margin: 40px auto;
+        }
+
+        section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #add-button {
+            align-self: flex-start;
+            width: fit-content;
+            padding: 10px 20px;
+            width: 6rem;
+            color: white;
+            background-color: green;
+        }
+
+        section>* {
+            margin: 0 0 0.25rem 0;
         }
 
         input {
@@ -18,15 +36,23 @@
         }
 
         button {
-            padding: 6px 12px;
+            padding: 0.5rem 1rem;
         }
 
         li button {
-            margin-left: 0.5rem;
+            margin: auto 0 auto auto;
+            color: white;
+            background-color: red;
         }
 
-        li {
-            margin: 6px 0;
+        ul {
+            padding-left: 0.5rem;
+        }
+
+        ul>li {
+            display: flex;
+            flex-direction: row;
+            margin: 0.5rem 0;
         }
 
         .done {
@@ -39,42 +65,85 @@
 <body>
     <div id="app">
         <h1>Todo App Demo</h1>
-        <p>Press Add button to add new todo items:</p>
-        <textarea v-model="newTodo" @keyup.ctrl.enter="addTodo" placeholder="Add new todo item" rows="2" maxlength="200"
-            style="width: 100%; padding: 12px; font-size: 16px; resize: vertical;">
-        </textarea>
-        <button @click="addTodo">Add</button>
         <section>
+            <p>Press Add button (or Enter key) to add a new todo</p>
+            <input id="newTodoName" type="text" :maxlength="maxCharacters" v-model="newTodo" @keyup.enter="addTodo"
+                placeholder="New todo item">
+            <span>{{ charactersRemaining }} / {{ maxCharacters }}</span>
+            <button id="add-button" @click="addTodo">Add</button>
+        </section>
+        <section>
+            <div style="margin: 20px 0;">
+                <label for="sort">Order by: </label>
+                <select id="sort" v-model="sortBy" style="padding: 8px; font-size: 16px;">
+                    <option value="done-first">Status</option>
+                    <option value="title">A-z</option>
+                </select>
+            </div>
             <ul>
-                <li v-for="todo in todos" :key="todo.id">
+                <li v-for="todo in sortedTodos" :key="todo.id" style="padding: 0; border-bottom: 1px dashed #ddd;">
                     <label>
                         <input type="checkbox" v-model="todo.isDone" @change="toggleDone(todo)">
-                        <span :class="{ done: todo.isDone }">{{ todo.title }}</span>
+                        <span :class="{ done: todo.isDone }">
+                            {{ truncate(todo.title, 35) }}
+                        </span>
                     </label>
                     <button @click="removeTodo(todo.id)">Delete</button>
                 </li>
             </ul>
             <p>
-                <strong>{{ remaining }}</strong> todo items
+                Completed <strong>{{ completed }}</strong> out of <strong>{{ total }}</strong>
             </p>
         </section>
     </div>
 
     <script>
+        const MAX_CHARACTERS = 50;
         const { createApp } = Vue;
         createApp({
             data() {
                 return {
                     newTodo: "",
-                    todos: []
+                    todos: [],
+                    sortBy: "title"
                 };
             },
             computed: {
-                remaining() {
-                    return this.todos.filter(t => !t.done).length;
+                sortedTodos() {
+                    const list = [...this.todos]; // NOTE: Needs a copy
+                    if (this.sortBy === "title") {
+                        return list.sort((a, b) => a.title.localeCompare(b.title));
+                    }
+                    if (this.sortBy === "done-first") {
+                        return list.sort((a, b) => {
+                            if (a.isDone !== b.isDone) {
+                                return a.isDone ? 1 : -1;
+                            }
+                            return a.title.localeCompare(b.title);
+                        });
+                    }
+                    return list;
+                },
+                completed() {
+                    return this.todos.filter(t => t.isDone).length;
+                },
+                total() {
+                    return this.todos.length;
+                },
+                maxCharacters() {
+                    return MAX_CHARACTERS;
+                },
+                charactersRemaining() {
+                    return MAX_CHARACTERS - this.newTodo.length;
                 }
             },
             methods: {
+                truncate(text, length) {
+                    if (!text) {
+                        return "";
+                    }
+                    return text.length > length ? text.substring(0, length) + "..." : text;
+                },
                 async loadTodos() {
                     try {
                         const response = await fetch("/api/todos");
