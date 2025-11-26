@@ -2,6 +2,8 @@
 
 Created using Windows 10 as development environment.
 
+![App screenshot](/scareenshot01.png)
+
 ## Technologies
 
 [ASP.NET Core 8.0](https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-8.0) - Backend server for HTTP API
@@ -19,4 +21,5 @@ Created using Windows 10 as development environment.
 - `run_unit_tests.bat`: Runs Xunit tests on `TodoDemoAppTests/TodoDemoAppTests.csproj`
 
 - `publish_project_win-x64.bat`: Builds a release of `TodoDemoApp/TodoDemoApp.csproj` for Windows
+
 
