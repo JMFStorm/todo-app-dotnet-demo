@@ -14,4 +14,3 @@ Created using Windows 10 as development environment.
 - `run_dev_server.bat`: Starts project locally `TodoDemoApp/TodoDemoApp.csproj` on localhost:5000
 - `run_unit_tests.bat`: Runs Xunit tests on `TodoDemoAppTests/TodoDemoAppTests.csproj`
 - `publish_project_win-x64.bat`: Builds a release of `TodoDemoApp/TodoDemoApp.csproj` for Windows
-- 

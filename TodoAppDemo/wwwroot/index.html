@@ -64,7 +64,10 @@
 
 <body>
     <div id="app">
-        <h1>Todo App Demo</h1>
+        <section style="margin-bottom: 1rem;">
+            <h1 style="margin-bottom: 0;">Todo App Demo</h1>
+            <span>&copy; Janne Fagerstöm</span>
+        </section>
         <section>
             <p>Press Add button (or Enter key) to add a new todo</p>
             <input id="newTodoName" type="text" :maxlength="maxCharacters" v-model="newTodo" @keyup.enter="addTodo"
